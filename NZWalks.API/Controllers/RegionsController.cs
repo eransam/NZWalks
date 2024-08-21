@@ -37,11 +37,14 @@
 //}
 
 
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
+using NZWalks.API.Repositories;
 
 namespace NZWalks.API.Controllers
 {
@@ -51,92 +54,98 @@ namespace NZWalks.API.Controllers
     {
 
         private readonly NZWalksDbContext dbContext;
+        private readonly IMapper mapper;
+
+        public IRegionRepository RegionRepository { get; }
 
         //ctor
-        public RegionsController(NZWalksDbContext dbContext)
+        public RegionsController(NZWalksDbContext dbContext, IRegionRepository RegionRepository,
+            IMapper mapper)
         {
             this.dbContext = dbContext;
-
+            this.RegionRepository = RegionRepository;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             //get data from the db
-            var regionsDomain = dbContext.Regions.ToList();
+            //var regionsDomain = await dbContext.Regions.ToListAsync(); (the level before)
+            var regionsDomain = await RegionRepository.GetAllAsync();
 
-            //map domain module to DTOs
-            var regionsDto = new List<RegionDto>();
+            //the old map domain module to DTOs
+            //var regionsDto = new List<RegionDto>();
 
-            foreach (var regionDomain in regionsDomain)
-            {
-                regionsDto.Add(new RegionDto()
-                {
-                    Id = regionDomain.Id,
-                    Code = regionDomain.Code,
-                    Name = regionDomain.Name,
-                    RegionImageUrl = regionDomain.RegionImageUrl
-                });
+            //foreach (var regionDomain in regionsDomain)
+            //{
+            //    regionsDto.Add(new RegionDto()
+            //    {
+            //        Id = regionDomain.Id,
+            //        Code = regionDomain.Code,
+            //        Name = regionDomain.Name,
+            //        RegionImageUrl = regionDomain.RegionImageUrl
+            //    });
 
-            }
+            //}
 
-
+            // the new map domain module to DTOs
+            var regionsDto=  mapper.Map<List<RegionDto>>(regionsDomain);
 
             return Ok(regionsDto);
-
         }
 
 
-        //-------------------------------------------
-        //-------------------------------------------
+        //--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
 
 
         [HttpGet]
-        [Route("{id:guid}")]
-
-        public IActionResult GetById([FromRoute]Guid id)
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-
-            var regionsDomain = dbContext.Regions.FirstOrDefault(x=>x.Id == id);
+            var regionsDomain = await RegionRepository.GetByIdAsync(id);
             //var region = dbContext.Regions.Find(id);
-
             if (regionsDomain == null)
             {
                 return NotFound();
             }
-
             var regionsDto = new RegionDto
             {
                 Id = regionsDomain.Id,
                 Code = regionsDomain.Code,
                 Name = regionsDomain.Name,
                 RegionImageUrl = regionsDomain.RegionImageUrl
-
             };
-
             return Ok(regionsDto);
-
         }
-        //-------------------------------------------
-        //-------------------------------------------
+
+
+        //--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
+
 
         [HttpPost]
-
         // AddRegionRequestDto ואנ מכניסים אותו למשתנה בשם AddRegionRequestDto מקבל מהבודי של הבקשה אובייקט מסוג      
-        public IActionResult Create([FromBody] AddRegionRequestDto AddRegionRequestDto)
-
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto AddRegionRequestDto)
         {
-            var regionDomainModel = new Region
-            {
-                Code = AddRegionRequestDto.Code,
-                Name = AddRegionRequestDto.Name,
-                RegionImageUrl = AddRegionRequestDto.RegionImageUrl
-            };
+
+            //the code the convert before using the mapper
+            //var regionDomainModel = new Region
+            //{
+            //    Code = AddRegionRequestDto.Code,
+            //    Name = AddRegionRequestDto.Name,
+            //    RegionImageUrl = AddRegionRequestDto.RegionImageUrl
+            //};
+
+            //the code using mapper to convert
+            var regionDomainModel = mapper.Map<Region>(AddRegionRequestDto);
 
             //מוסיפים אותו לדאטה בייס ושומרים
-            dbContext.Regions.Add(regionDomainModel);
-            dbContext.SaveChanges();
-
+            //בעבר:
+            //await dbContext.Regions.AddAsync(regionDomainModel);
+            //await dbContext.SaveChangesAsync();
+            regionDomainModel =  await RegionRepository.CreateAsync(regionDomainModel);
             //ממירים אותו לאובייקט מצומצם אשר יוחזר ליוזר
             var regionDto = new RegionDto
             {
@@ -144,9 +153,7 @@ namespace NZWalks.API.Controllers
                 Code = regionDomainModel.Code,
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl
-
             };
-
             //CreatedAtAction  = used to return a 201 Created response
             //nameof(GetById), new { id = regionDto.Id } - מחזיר בהדר של הבקשה את היואראל של האובייקט שהתווסף
             //regionDto = מחזיר את האובייקט שהתווסף
@@ -154,78 +161,80 @@ namespace NZWalks.API.Controllers
         }
 
 
-        //-------------------------------------------
-        //-------------------------------------------
-
+        //--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
 
 
         [HttpPut]
         //מקבל פרמטר בקריאה
         [Route("{id:guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto UpdateRegionRequestDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            // Convert DTO to Domain model
-            var regionDomainModel  = dbContext.Regions.FirstOrDefault(x => x.Id == id);
 
+            // Convert DTO to Domain model
+            
+
+            var regionDomainModel = new Region {
+                Code = updateRegionRequestDto.Code,
+                Name = updateRegionRequestDto.Name,
+                RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+            };
+
+            regionDomainModel=await RegionRepository.UpdateAsync(id, regionDomainModel);
             if (regionDomainModel == null)
             { 
                 return NotFound();
-
             }
-            regionDomainModel.Code = UpdateRegionRequestDto.Code;
-            regionDomainModel.Name = UpdateRegionRequestDto.Name;
-            regionDomainModel.RegionImageUrl = UpdateRegionRequestDto.RegionImageUrl;
-
-            dbContext.SaveChanges();
-
+            regionDomainModel.Code = updateRegionRequestDto.Code;
+            regionDomainModel.Name = updateRegionRequestDto.Name;
+            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
+            await dbContext.SaveChangesAsync();
             // Convert Domain back to DTO
-            var regionDTO = new RegionDto
+            var regionDto = new RegionDto
             {
                 Id = regionDomainModel.Id,
                 Code = regionDomainModel.Code,
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl
             };
-
-
             // Return Ok response
-            return Ok(regionDTO);
+            return Ok(regionDto);
         }
+
+
+        //--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
 
 
         [HttpDelete]
         //מקבל פרמטר בקריאה
         [Route("{id:guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             // Convert DTO to Domain model
-            var regionDomainModel = dbContext.Regions.FirstOrDefault(x => x.Id == id);
+            var regionDomainModel = await RegionRepository.DeleteAsync(id);
 
             if (regionDomainModel == null)
             {
                 return NotFound();
-
             }
 
-
-            dbContext.Regions.Remove(regionDomainModel);
-
-
-            dbContext.SaveChanges();
-
             // Convert Domain back to DTO
-            var regionDTO = new RegionDto
+            var regionDto = new RegionDto
             {
                 Id = regionDomainModel.Id,
                 Code = regionDomainModel.Code,
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl
             };
-
-
             // Return Ok response
-            return Ok(regionDTO);
+            return Ok(regionDto);
         }
+
+
+        //--------------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
+
 
 
     }

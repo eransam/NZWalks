@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NZWalks.API.Data;
+using NZWalks.API.Mappings;
+using NZWalks.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,17 @@ builder.Services.AddDbContext<NZWalksDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalks"));
 });
+
+//מוסיפים פה את השימוש באינטרפייס שמממש את הפונקציונליות של ה  
+//SqlRegionRepository
+
+//דוג' לשינוי רפוזטורי בקלות
+//builder.Services.AddScoped<IRegionRepository,InMemoryRegionRepository>();
+builder.Services.AddScoped<IRegionRepository, SqlRegionRepository>();
+
+//autoMapper
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
 
 var app = builder.Build();
 
