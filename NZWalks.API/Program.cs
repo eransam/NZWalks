@@ -23,6 +23,7 @@ builder.Services.AddDbContext<NZWalksDbContext>(options =>
 //דוג' לשינוי רפוזטורי בקלות
 //builder.Services.AddScoped<IRegionRepository,InMemoryRegionRepository>();
 builder.Services.AddScoped<IRegionRepository, SqlRegionRepository>();
+builder.Services.AddScoped<IWalkRepository, SQLWalkRepositort>();
 
 //autoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
