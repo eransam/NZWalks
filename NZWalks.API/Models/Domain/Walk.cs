@@ -12,7 +12,7 @@
 
         // Navigation Properties
         public Region Region { get; set; }
-        public WalkDifficulty Difficulty { get; set; }
+        public Difficulty Difficulty { get; set; }
 
     }
 }

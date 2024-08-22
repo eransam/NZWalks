@@ -1,6 +1,10 @@
-﻿namespace NZWalks.API.Repositories
+﻿using NZWalks.API.Models.Domain;
+
+namespace NZWalks.API.Repositories
 {
-    public interface Interface
+    public interface IWalkRepository
     {
+        Task<Walk> CreateAsync(Walk walk);
+
     }
 }
