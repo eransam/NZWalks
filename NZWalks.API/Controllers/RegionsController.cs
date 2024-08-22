@@ -41,6 +41,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NZWalks.API.CustomActionFilters;
 using NZWalks.API.Data;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Models.DTO;
@@ -126,38 +127,33 @@ namespace NZWalks.API.Controllers
 
 
         [HttpPost]
+        [ValidateModel]
         // AddRegionRequestDto ואנ מכניסים אותו למשתנה בשם AddRegionRequestDto מקבל מהבודי של הבקשה אובייקט מסוג      
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto AddRegionRequestDto)
         {
 
-            //the code the convert before using the mapper
-            //var regionDomainModel = new Region
-            //{
-            //    Code = AddRegionRequestDto.Code,
-            //    Name = AddRegionRequestDto.Name,
-            //    RegionImageUrl = AddRegionRequestDto.RegionImageUrl
-            //};
+                var regionDomainModel = mapper.Map<Region>(AddRegionRequestDto);
 
-            //the code using mapper to convert
-            var regionDomainModel = mapper.Map<Region>(AddRegionRequestDto);
+                //מוסיפים אותו לדאטה בייס ושומרים
+                //בעבר:
+                //await dbContext.Regions.AddAsync(regionDomainModel);
+                //await dbContext.SaveChangesAsync();
+                regionDomainModel = await RegionRepository.CreateAsync(regionDomainModel);
 
-            //מוסיפים אותו לדאטה בייס ושומרים
-            //בעבר:
-            //await dbContext.Regions.AddAsync(regionDomainModel);
-            //await dbContext.SaveChangesAsync();
-            regionDomainModel =  await RegionRepository.CreateAsync(regionDomainModel);
-            //ממירים אותו לאובייקט מצומצם אשר יוחזר ליוזר
-            var regionDto = new RegionDto
-            {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl
-            };
-            //CreatedAtAction  = used to return a 201 Created response
-            //nameof(GetById), new { id = regionDto.Id } - מחזיר בהדר של הבקשה את היואראל של האובייקט שהתווסף
-            //regionDto = מחזיר את האובייקט שהתווסף
-            return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+                //ממירים אותו לאובייקט מצומצם אשר יוחזר ליוזר
+                var regionDto = new RegionDto
+                {
+                    Id = regionDomainModel.Id,
+                    Code = regionDomainModel.Code,
+                    Name = regionDomainModel.Name,
+                    RegionImageUrl = regionDomainModel.RegionImageUrl
+                };
+
+                //CreatedAtAction  = used to return a 201 Created response
+                //nameof(GetById), new { id = regionDto.Id } - מחזיר בהדר של הבקשה את היואראל של האובייקט שהתווסף
+                //regionDto = מחזיר את האובייקט שהתווסף
+                return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+
         }
 
 
