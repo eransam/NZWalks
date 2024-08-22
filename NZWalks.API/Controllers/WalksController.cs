@@ -19,18 +19,14 @@ namespace NZWalks.API.Controllers
             this.mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllWalksAsync()
-        //{
-        //    // Fetch data from database - domain walks
-        //    var walksDomain = await walkRepository.GetAllAsync();
-
-        //    // Convert domain walks to DTO Walks
-        //    var walksDTO = mapper.Map<List<Models.DTO.Walk>>(walksDomain);
-
-        //    // Return response
-        //    return Ok(walksDTO);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAllWalksAsync()
+        {
+            // Fetch data from database - domain walks
+            var walksDomain = await walkRepository.GetAllAsync();
+            // Return response
+            return Ok(mapper.Map<List<WalkDto>>(walksDomain));
+        }
 
         //[HttpGet]
         //[Route("{id:guid}")]
