@@ -20,10 +20,10 @@ namespace NZWalks.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllWalksAsync()
+        public async Task<IActionResult> GetAllWalksAsync([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
         {
             // Fetch data from database - domain walks
-            var walksDomain = await walkRepository.GetAllAsync();
+            var walksDomain = await walkRepository.GetAllAsync(filterOn, filterQuery);
             // Return response
             return Ok(mapper.Map<List<WalkDto>>(walksDomain));
         }
@@ -44,6 +44,7 @@ namespace NZWalks.API.Controllers
             // Return response
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddWalkAsync([FromBody] AddWalkRequestDto AddWalkRequestDto)

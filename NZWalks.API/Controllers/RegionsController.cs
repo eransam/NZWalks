@@ -127,6 +127,7 @@ namespace NZWalks.API.Controllers
 
 
         [HttpPost]
+        //from ValidateModelAttribute file
         [ValidateModel]
         // AddRegionRequestDto ואנ מכניסים אותו למשתנה בשם AddRegionRequestDto מקבל מהבודי של הבקשה אובייקט מסוג      
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto AddRegionRequestDto)
