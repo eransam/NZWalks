@@ -1,0 +1,5 @@
+2024-08-23 20:08:58.075 +03:00 [INF] Now listening on: https://localhost:7119
+2024-08-23 20:08:58.313 +03:00 [INF] Now listening on: http://localhost:5228
+2024-08-23 20:08:58.325 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-23 20:08:58.344 +03:00 [INF] Hosting environment: Development
+2024-08-23 20:08:58.346 +03:00 [INF] Content root path: C:\eran-projects\Build ASP.NET Core Web API - Scratch To Finish (.NET8 API)\NZWalks\NZWalks\NZWalks.API

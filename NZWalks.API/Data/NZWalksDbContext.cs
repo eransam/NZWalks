@@ -43,8 +43,6 @@ namespace NZWalks.API.Data
             // Seed difficulties to the database
             modelBuilder.Entity<Difficulty>().HasData(difficulties);
 
-
-
             // Seed data for Regions
             var regions = new List<Region>
             {

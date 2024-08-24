@@ -1,4 +1,5 @@
-﻿//using Microsoft.AspNetCore.Http;
+﻿//דוגמא ליצירת קונטרולר ארד קודד
+//using Microsoft.AspNetCore.Http;
 //using Microsoft.AspNetCore.Mvc;
 //using NZWalks.API.Models.Domain;
 
@@ -56,21 +57,28 @@ namespace NZWalks.API.Controllers
 
         private readonly NZWalksDbContext dbContext;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
         public IRegionRepository RegionRepository { get; }
 
         //ctor
-        public RegionsController(NZWalksDbContext dbContext, IRegionRepository RegionRepository,
-            IMapper mapper)
+        public RegionsController(
+            NZWalksDbContext dbContext,
+            IRegionRepository RegionRepository,
+            IMapper mapper,
+              ILogger<RegionsController> logger)
         {
             this.dbContext = dbContext;
             this.RegionRepository = RegionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+
+            logger.LogInformation("test");
             //get data from the db
             //var regionsDomain = await dbContext.Regions.ToListAsync(); (the level before)
             var regionsDomain = await RegionRepository.GetAllAsync();
@@ -97,10 +105,6 @@ namespace NZWalks.API.Controllers
         }
 
 
-        //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
-
-
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
@@ -120,10 +124,6 @@ namespace NZWalks.API.Controllers
             };
             return Ok(regionsDto);
         }
-
-
-        //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
 
 
         [HttpPost]
@@ -156,10 +156,6 @@ namespace NZWalks.API.Controllers
                 return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
 
         }
-
-
-        //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
 
 
         [HttpPut]
@@ -199,10 +195,6 @@ namespace NZWalks.API.Controllers
         }
 
 
-        //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
-
-
         [HttpDelete]
         //מקבל פרמטר בקריאה
         [Route("{id:guid}")]
@@ -227,10 +219,6 @@ namespace NZWalks.API.Controllers
             // Return Ok response
             return Ok(regionDto);
         }
-
-
-        //--------------------------------------------------------------------------------------
-        //--------------------------------------------------------------------------------------
 
 
 

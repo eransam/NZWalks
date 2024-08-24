@@ -1,0 +1,13 @@
+2024-08-24 09:29:00.863 +03:00 [INF] Now listening on: https://localhost:7119
+2024-08-24 09:29:00.934 +03:00 [INF] Now listening on: http://localhost:5228
+2024-08-24 09:29:00.949 +03:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-08-24 09:29:00.950 +03:00 [INF] Hosting environment: Development
+2024-08-24 09:29:00.952 +03:00 [INF] Content root path: C:\eran-projects\Build ASP.NET Core Web API - Scratch To Finish (.NET8 API)\NZWalks\NZWalks\NZWalks.API
+2024-08-24 09:29:03.717 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7119/swagger/index.html - null null
+2024-08-24 09:29:05.604 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7119/swagger/index.html - 200 null text/html;charset=utf-8 1897.6442ms
+2024-08-24 09:29:05.808 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7119/_framework/aspnetcore-browser-refresh.js - null null
+2024-08-24 09:29:05.822 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7119/_vs/browserLink - null null
+2024-08-24 09:29:07.486 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7119/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 1677.8899ms
+2024-08-24 09:29:07.772 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7119/_vs/browserLink - 200 null text/javascript; charset=UTF-8 1947.866ms
+2024-08-24 09:29:07.883 +03:00 [INF] Request starting HTTP/2 GET https://localhost:7119/swagger/v1/swagger.json - null null
+2024-08-24 09:29:08.432 +03:00 [INF] Request finished HTTP/2 GET https://localhost:7119/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 549.5961ms
