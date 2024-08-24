@@ -39,6 +39,7 @@
 
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,9 @@ namespace NZWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    //[Authorize] אפשר לקבוע את זה באופן כללי כך
+    //[Authorize(Roles = "Reader")] // ואפשר לקבוע תנאים כך
     public class RegionsController : ControllerBase
     {
 
@@ -74,6 +78,10 @@ namespace NZWalks.API.Controllers
             this.logger = logger;
         }
 
+
+        //[Authorize] אפשר לקבוע את זה באופן כללי כך
+        //[Authorize(Roles = "Reader , Writer")]
+        [Authorize(Roles = "Reader")] // ואפשר לקבוע תנאים כך
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -125,7 +133,7 @@ namespace NZWalks.API.Controllers
             return Ok(regionsDto);
         }
 
-
+        [Authorize(Roles = "Writer")]
         [HttpPost]
         //from ValidateModelAttribute file
         [ValidateModel]
